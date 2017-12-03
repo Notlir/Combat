@@ -13,18 +13,11 @@ public abstract class Ennemi extends Entitee {
 	}
 	
 
-	@Override
-	public void action(ArrayList<Entitee> protagonistes)
-	{
-		ArrayList<Entitee> cibles=this.ciblage(protagonistes);
-		
-		Random Choix= new Random();
-		Entitee cible=cibles.get(Choix.nextInt(cibles.size()));
-		this.attaque(cible);
+
 			
 		
 		
-	}
+	
 
 	
 	@Override

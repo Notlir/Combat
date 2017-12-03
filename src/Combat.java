@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 
 
 public class Combat {
@@ -75,6 +76,82 @@ public class Combat {
 		return ordre;
 		
 	}
+	private ArrayList<Entitee> ciblage(Entitee instigateur)
+	{
+		ArrayList<Entitee> cibles=new ArrayList<Entitee>();
+		
+		for(int i=0;i<protagonistes.size();i++)
+		{
+			if(instigateur.isFriendly()!=protagonistes.get(i).isFriendly() && protagonistes.get(i).getPV()>0)
+			{
+				cibles.add(protagonistes.get(i));
+			}
+		}
+		
+		return cibles;
+		
+	}
+	
+	public boolean attaque(Entitee cible,Entitee attaquant)
+	{
+		int deg=attaquant.atk-cible.getDef();
+		System.out.println(attaquant.getNom()+" attaque "+cible.getNom()+" !");
+		if(deg>0)
+		{
+			System.out.println(cible.getNom()+" subis "+deg+" points de dégats !");
+		if(cible.getDegats(deg)==true)
+		{
+			System.out.println(cible.getNom()+" est neutralisé !");
+			return true;
+		}
+		else return false;
+		}
+		System.out.println("Mais il n'inflige aucun dégats !");
+		return false;
+	}
+	
+	private Entitee choixCible(Entitee instigateur)//Interface pour que le joueur choisisse sa cible
+	{
+		ArrayList<Entitee> cibles=ciblage(instigateur);
+		int choix=-1;
+		while(choix>cibles.size() || choix<0)
+		{
+		for(int i=0;i<cibles.size();i++)
+		{
+			System.out.println((i+1)+". "+cibles.get(i).getNom()+" LVL"+cibles.get(i).getLVL());		
+		}
+		Scanner sc=new Scanner(System.in);
+		choix=(sc.nextInt())-1;
+		
+		}
+		return cibles.get(choix);
+		
+	}
+	
+	
+	public void actionIA(Entitee actif)
+	{
+		ArrayList<Entitee> cibles=ciblage(actif);
+		
+		Random Choix= new Random();
+		Entitee cible=cibles.get(Choix.nextInt(cibles.size()));
+		attaque(cible,actif);
+		
+	}
+	
+	
+	
+	
+	public void actionJoueur(Entitee actif)
+	{
+		System.out.println("->Action de "+actif.getNom());
+		System.out.println("Pv:"+actif.getPV());
+		Entitee cible=this.choixCible(actif);
+		
+		attaque(cible,actif);
+	
+		
+	}
 	
 	private void retirerBlesse()
 	{
@@ -92,6 +169,8 @@ public class Combat {
 			compteur++;
 		}
 	}
+	
+	
 	
 	
 	protected int conditionVictoire()
@@ -135,7 +214,15 @@ public class Combat {
 			{
 				if(this.protagonistes.get(ordre.get(i)).getPV()>0 && conditionVictoire()==0)
 				{
-				this.protagonistes.get(ordre.get(i)).action(protagonistes);
+				if(this.protagonistes.get(ordre.get(i)).isFriendly()==true)
+				{
+					actionJoueur(this.protagonistes.get(ordre.get(i)));
+				}
+				
+				else
+				{
+					actionIA(this.protagonistes.get(ordre.get(i)));
+				}
 				}
 			}
 		
