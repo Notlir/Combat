@@ -3,6 +3,7 @@ import java.util.ArrayList;
 
 public class Main {
 
+	//test
 	public static void main(String[] args) {
 		ArrayList<Joueur> groupe=new ArrayList<Joueur>();
 		groupe.add(new Guerrier());
