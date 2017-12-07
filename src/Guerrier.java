@@ -10,6 +10,7 @@ public class Guerrier extends Joueur {
 		 this.pv=this.pvMax;
 		 this.xp=0;
 		 this.nom="Guerrier"; 
-		 
+		 this.manaMax=75;
+		 this.mana=75;
 	 }
 }

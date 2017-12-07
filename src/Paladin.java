@@ -10,6 +10,10 @@ public class Paladin extends Joueur {
 		this.lvl=1;
 		this.xp=0;
 		this.nom="Paladin";
+		this.manaMax=200;
+		this.mana=200;
+		this.sorts.add(new Smite());
+		
 	}
 	
 	

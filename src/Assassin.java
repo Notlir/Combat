@@ -10,6 +10,8 @@ public class Assassin extends Joueur {
 		this.lvl=1;
 		this.xp=0;
 		this.nom="Assassin";
+		this.manaMax=100;
+		this.mana=100;
 	}
 
 }

@@ -10,7 +10,7 @@ public class Squelette extends Ennemi {
 		this.def=3;
 		this.lvl=diff;
 		this.pvMax=25;
-		this.pv=20;
+		this.pv=3;
 		this.loot=1;
 		this.nom="Squellete";
 	}

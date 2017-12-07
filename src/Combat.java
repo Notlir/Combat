@@ -92,29 +92,26 @@ public class Combat {
 		
 	}
 	
-	public boolean attaque(Entitee cible,Entitee attaquant)
+	public void attaque(Entitee cible,Entitee attaquant)
 	{
 		int deg=attaquant.atk-cible.getDef();
 		System.out.println(attaquant.getNom()+" attaque "+cible.getNom()+" !");
 		if(deg>0)
 		{
 			System.out.println(cible.getNom()+" subis "+deg+" points de dégats !");
-		if(cible.getDegats(deg)==true)
+			cible.getDegats(deg);
+		}
+		else
 		{
-			System.out.println(cible.getNom()+" est neutralisé !");
-			return true;
-		}
-		else return false;
-		}
 		System.out.println("Mais il n'inflige aucun dégats !");
-		return false;
+		}
 	}
 	
 	private Entitee choixCible(Entitee instigateur)//Interface pour que le joueur choisisse sa cible
 	{
 		ArrayList<Entitee> cibles=ciblage(instigateur);
 		int choix=-1;
-		while(choix>cibles.size() || choix<0)
+		while(choix>=cibles.size() || choix<0)
 		{
 		for(int i=0;i<cibles.size();i++)
 		{
@@ -144,16 +141,41 @@ public class Combat {
 	
 	public void actionJoueur(Entitee actif)
 	{
+		if(ciblage(actif).size()>0) {
+		int choix;
 		System.out.println("->Action de "+actif.getNom());
 		System.out.println("Pv:"+actif.getPV());
-		Entitee cible=this.choixCible(actif);
-		
+		System.out.println("1.Attaque\n2.Competences");
+		Scanner sc=new Scanner(System.in);
+		Entitee cible;
+		choix=sc.nextInt();
+		if(choix==1)
+		{
+		cible=this.choixCible(actif);
 		attaque(cible,actif);
-	
+		}
+		else if(choix==2)
+		{
+			int c=1;
+			for(Competence i :actif.getSorts())
+			{
+				System.out.println(c+". "+i.getNom());
+				c++;
+			}
+			
+			choix=sc.nextInt();
+			cible=this.choixCible(actif);
+			cible.subirComp(actif.getComp().get(choix-1));
+			
+			
+			
+		}
+		
+		}
 		
 	}
 	
-	private void retirerBlesse()
+	private void retirerBlesse(ArrayList<Entitee> passage)
 	{
 		boolean blesse=false;
 		int compteur=0;
@@ -161,8 +183,10 @@ public class Combat {
 		{
 			if(this.protagonistes.get(compteur).getPV()<=0)
 			{
+				passage.remove(this.protagonistes.get(compteur));
 				this.protagonistes.remove(compteur);
-				retirerBlesse();
+				
+				retirerBlesse(passage);
 				blesse=true;
 			}
 			
@@ -205,28 +229,34 @@ public class Combat {
 		
 		int victory=0;
 		ArrayList<Integer> ordre;
+		ArrayList<Entitee>passage=new ArrayList<Entitee>();
 		while(victory==0)
 		{ 
 			this.round++;
 			System.out.println("###########ROUND "+this.round+"###########");
 			ordre=this.Initiative();
-			for(int i=0;i<ordre.size();i++)
+			for(int j : ordre)
 			{
-				if(this.protagonistes.get(ordre.get(i)).getPV()>0 && conditionVictoire()==0)
+				passage.add(this.protagonistes.get(j));
+			}
+			for(Entitee i : passage)
+			{
+				if(i.getPV()>0 && conditionVictoire()==0)
 				{
-				if(this.protagonistes.get(ordre.get(i)).isFriendly()==true)
-				{
-					actionJoueur(this.protagonistes.get(ordre.get(i)));
+					if(i.isFriendly()==true)
+						{
+							actionJoueur(i);
+						}
+				
+					else
+					{
+						actionIA(i);
+					}
 				}
 				
-				else
-				{
-					actionIA(this.protagonistes.get(ordre.get(i)));
-				}
-				}
 			}
 		
-			this.retirerBlesse();
+			this.retirerBlesse(passage);
 			
 			victory=conditionVictoire();
 			
