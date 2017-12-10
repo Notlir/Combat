@@ -1,3 +1,5 @@
+package competences;
+
 import java.util.ArrayList;
 
 public abstract class Competence {
@@ -10,6 +12,8 @@ public abstract class Competence {
 	protected int degheal;
 	protected int deghealDurr;
 	protected int cout; // cout en mana
+	protected int tag;//1=offensif,2=support,3=soins;
+	
 	
 	
 	public int getDegDurr()
@@ -50,6 +54,11 @@ public abstract class Competence {
 	public String getNom()
 	{
 		return this.nom;
+	}
+	
+	public int getTag()
+	{
+		return this.tag;
 	}
 	
 }

@@ -1,3 +1,4 @@
+package competences;
 import java.util.ArrayList;
 
 public class Effet {

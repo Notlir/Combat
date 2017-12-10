@@ -1,3 +1,4 @@
+package personnages;
 
 public class Assassin extends Joueur {
 	
@@ -12,6 +13,10 @@ public class Assassin extends Joueur {
 		this.nom="Assassin";
 		this.manaMax=100;
 		this.mana=100;
+		
 	}
+	
+	
+	
 
 }

@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
+import personnages.*;
+import competences.*;
 
 public class Combat {
 	
@@ -34,11 +36,12 @@ public class Combat {
 		}
 		moyenneNiveau=(moyenneNiveau/i)+difficult;
 		
-		for(int j=0;j<3;j++) //TODO:MODIFIER LE 3
+		for(int j=0;j<2;j++) //TODO:MODIFIER LE 3
 		{
 			this.protagonistes.add(new Squelette(moyenneNiveau));
 			
 		}
+		this.protagonistes.add(new Liche(moyenneNiveau));
 		
 		this.recompense=moyenneNiveau*25*Squelette.getLoot();
 		
@@ -76,15 +79,25 @@ public class Combat {
 		return ordre;
 		
 	}
-	private ArrayList<Entitee> ciblage(Entitee instigateur)
+	private ArrayList<Entitee> ciblage(Entitee instigateur,boolean offensif)
 	{
 		ArrayList<Entitee> cibles=new ArrayList<Entitee>();
 		
 		for(int i=0;i<protagonistes.size();i++)
 		{
-			if(instigateur.isFriendly()!=protagonistes.get(i).isFriendly() && protagonistes.get(i).getPV()>0)
+			if(offensif==true)
 			{
-				cibles.add(protagonistes.get(i));
+				if(instigateur.isFriendly()!=protagonistes.get(i).isFriendly() && protagonistes.get(i).getPV()>0)
+				{
+					cibles.add(protagonistes.get(i));
+				}
+			}
+			else
+			{
+				if(instigateur.isFriendly()==protagonistes.get(i).isFriendly() && protagonistes.get(i).getPV()>0)
+				{
+					cibles.add(protagonistes.get(i));
+				}
 			}
 		}
 		
@@ -94,7 +107,7 @@ public class Combat {
 	
 	public void attaque(Entitee cible,Entitee attaquant)
 	{
-		int deg=attaquant.atk-cible.getDef();
+		int deg=attaquant.getAtk()-cible.getDef();
 		System.out.println(attaquant.getNom()+" attaque "+cible.getNom()+" !");
 		if(deg>0)
 		{
@@ -107,9 +120,9 @@ public class Combat {
 		}
 	}
 	
-	private Entitee choixCible(Entitee instigateur)//Interface pour que le joueur choisisse sa cible
+	private Entitee choixCible(Entitee instigateur,boolean offensif)//Interface pour que le joueur choisisse sa cible
 	{
-		ArrayList<Entitee> cibles=ciblage(instigateur);
+		ArrayList<Entitee> cibles=ciblage(instigateur,offensif);
 		int choix=-1;
 		while(choix>=cibles.size() || choix<0)
 		{
@@ -126,13 +139,22 @@ public class Combat {
 	}
 	
 	
+	
 	public void actionIA(Entitee actif)
 	{
-		ArrayList<Entitee> cibles=ciblage(actif);
+		Action choix=IA.decision(actif, ciblage(actif,true), ciblage(actif,false));
 		
-		Random Choix= new Random();
-		Entitee cible=cibles.get(Choix.nextInt(cibles.size()));
-		attaque(cible,actif);
+		if(choix.getSort()==null)
+		{
+			attaque(choix.getCible(),actif);
+		}
+		
+		else
+		{
+			System.out.println(actif.getNom()+" utilise "+choix.getSort().getNom());
+			choix.getCible().subirComp(choix.getSort());
+		}
+		
 		
 	}
 	
@@ -141,7 +163,7 @@ public class Combat {
 	
 	public void actionJoueur(Entitee actif)
 	{
-		if(ciblage(actif).size()>0) {
+		if(ciblage(actif,true).size()>0) {
 		int choix;
 		System.out.println("->Action de "+actif.getNom());
 		System.out.println("Pv:"+actif.getPV());
@@ -151,7 +173,7 @@ public class Combat {
 		choix=sc.nextInt();
 		if(choix==1)
 		{
-		cible=this.choixCible(actif);
+		cible=this.choixCible(actif,true);
 		attaque(cible,actif);
 		}
 		else if(choix==2)
@@ -162,10 +184,13 @@ public class Combat {
 				System.out.println(c+". "+i.getNom());
 				c++;
 			}
-			
+			do {
 			choix=sc.nextInt();
-			cible=this.choixCible(actif);
+			}while(actif.getComp().get(choix-1).getCout()>actif.getMana());
+		
+			cible=this.choixCible(actif,actif.getComp().get(choix-1).getCible());
 			cible.subirComp(actif.getComp().get(choix-1));
+			actif.reduireMana(actif.getComp().get(choix-1).getCout());
 			
 			
 			
@@ -243,10 +268,12 @@ public class Combat {
 			{
 				if(i.getPV()>0 && conditionVictoire()==0)
 				{
+					
 					if(i.isFriendly()==true)
 						{
 							actionJoueur(i);
 						}
+					
 				
 					else
 					{

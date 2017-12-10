@@ -1,4 +1,8 @@
+package personnages;
 import java.util.ArrayList;
+
+import competences.*;
+
 
 public abstract class Entitee {
 	protected String nom;
@@ -12,6 +16,7 @@ public abstract class Entitee {
 	protected int mana;
 	protected ArrayList<Competence> sorts=new ArrayList<Competence>();
 
+		
 	public boolean getDegats(int deg)
 	{
 		this.pv=this.pv-deg;
@@ -38,6 +43,10 @@ public abstract class Entitee {
 		}
 	}
 	
+	public int getAtk()
+	{
+		return this.atk;
+	}
 	
 	
 	public int getDef()
@@ -55,7 +64,7 @@ public abstract class Entitee {
 
 
 	
-	protected abstract boolean isFriendly();
+	public abstract boolean isFriendly();
 	
 	public abstract void getXP(int xp);
 	
@@ -144,4 +153,40 @@ public abstract class Entitee {
 		return this.sorts;
 	}
 	
+	public int getAttack()
+	{
+		return this.atk;
+	}
+	
+	public int getManaMax()
+	{
+		return this.manaMax;
+	}
+	
+	public int getMana()
+	{
+		return this.mana;
+	}
+	
+	public boolean fullLife()
+	{
+		if(this.pv==this.pvMax)
+		{
+			return true;
+		}
+		
+		else return false;
+	}
+	
+	public int getPVMax()
+	{
+		return this.pvMax;
+	}
+	
+	public ArrayList<Effet> getEffet()
+	{
+		return this.effets_subis;
+	}
+	
+
 }

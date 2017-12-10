@@ -1,3 +1,5 @@
+package personnages;
+import competences.*;
 
 public class Paladin extends Joueur {
 	

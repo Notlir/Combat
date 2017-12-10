@@ -1,3 +1,5 @@
+package competences;
+
 import java.util.ArrayList;
 
 public class Smite extends Competence {

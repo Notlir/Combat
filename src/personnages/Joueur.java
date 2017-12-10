@@ -1,3 +1,4 @@
+package personnages;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -30,7 +31,7 @@ public abstract class Joueur extends Entitee {
 	}
 	
 	@Override
-	protected boolean isFriendly()
+	public boolean isFriendly()
 	{
 		return true;
 	}

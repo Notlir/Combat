@@ -1,5 +1,8 @@
 import java.util.ArrayList;
 
+import personnages.*;
+
+
 
 public class Main {
 

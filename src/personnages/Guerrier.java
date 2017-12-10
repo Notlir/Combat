@@ -1,3 +1,4 @@
+package personnages;
 
 public class Guerrier extends Joueur {
 
