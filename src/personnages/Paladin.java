@@ -1,10 +1,13 @@
 package personnages;
+import org.newdawn.slick.SlickException;
+
 import competences.*;
 
 public class Paladin extends Joueur {
 	
-	public Paladin()
+	public Paladin() throws SlickException
 	{
+		super();
 		this.atk=5;
 		this.def=10;
 		this.pvMax=20;

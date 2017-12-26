@@ -15,7 +15,7 @@ public class Eclair_givre extends Competence {
 		this.duree=2;
 		this.cout=20;
 		this.zone=1;
-		this.degheal=-20;
+		this.degheal=-10;
 		this.deghealDurr=0;
 	}
 

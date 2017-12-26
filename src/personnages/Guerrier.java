@@ -1,9 +1,17 @@
 package personnages;
 
+import org.newdawn.slick.Animation;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.SpriteSheet;
+
+import competences.Eclair_givre;
+import competences.Smite;
+
 public class Guerrier extends Joueur {
 
-	 public Guerrier()
+	 public Guerrier() throws SlickException
 	 {
+		 
 		 this.atk=8;
 		 this.def=7;
 		 this.lvl=1;
@@ -13,5 +21,8 @@ public class Guerrier extends Joueur {
 		 this.nom="Guerrier"; 
 		 this.manaMax=75;
 		 this.mana=75;
+		 
+		 this.sorts.add(new Smite());
+		 this.sorts.add(new Eclair_givre());
 	 }
 }

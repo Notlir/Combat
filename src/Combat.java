@@ -2,6 +2,10 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.state.BasicGameState;
+
 import personnages.*;
 import competences.*;
 
@@ -10,26 +14,40 @@ public class Combat {
 	private int round;
 	private int recompense;
 	private ArrayList<Entitee> protagonistes;
+	private GameContainer fenetre;
+	public ArrayList<String> log;
+	ArrayList<Entitee>passage=new ArrayList<Entitee>();
 	
 	
-	public Combat(ArrayList<Joueur> groupe)
+	
+	public Combat(ArrayList<Joueur> groupe,GameContainer fenetre)
 	{
+		this.log=new ArrayList<String>(); 
+		this.fenetre=fenetre;
 		this.protagonistes=new ArrayList<Entitee>();
 		this.round=0;
 		for(int i=0;i<groupe.size();i++)
 		{
 			this.protagonistes.add(groupe.get(i));
+			this.protagonistes.get(i).setX(fenetre.getWidth()/6);
+			this.protagonistes.get(i).setY(fenetre.getHeight()/5+(i*(fenetre.getHeight()/8))+3*fenetre.getHeight()/12);
 			
 		}
 		this.recompense=0;
 	}
 	
+	public ArrayList<Entitee> getProta()
+	{
+		return this.protagonistes;
+	}
 	
 	
-	public void debutCombat(int difficult)
+	
+	public void debutCombat(int difficult) throws SlickException
 	{
 		int moyenneNiveau=0;
 		int i;
+		int debut=this.protagonistes.size();
 		for(i=0;i<this.protagonistes.size();i++)
 		{
 			moyenneNiveau=moyenneNiveau+this.protagonistes.get(i).getLVL();
@@ -39,13 +57,17 @@ public class Combat {
 		for(int j=0;j<2;j++) //TODO:MODIFIER LE 3
 		{
 			this.protagonistes.add(new Squelette(moyenneNiveau));
-			
+			this.protagonistes.get(debut).setX((fenetre.getWidth()/4)*3);
+			this.protagonistes.get(debut).setY(fenetre.getHeight()/5+(j*(fenetre.getHeight()/8))+3*fenetre.getHeight()/12);
+			debut++;
 		}
 		this.protagonistes.add(new Liche(moyenneNiveau));
+		this.protagonistes.get(debut).setX((fenetre.getWidth()/4)*3);
+		this.protagonistes.get(debut).setY(fenetre.getHeight()/5+(2*(fenetre.getHeight()/8))+3*fenetre.getHeight()/12);
 		
 		this.recompense=moyenneNiveau*25*Squelette.getLoot();
 		
-		mainCombat();
+		//mainCombat();
 	}
 	
 	private ArrayList<Integer> Initiative()
@@ -79,7 +101,7 @@ public class Combat {
 		return ordre;
 		
 	}
-	private ArrayList<Entitee> ciblage(Entitee instigateur,boolean offensif)
+	public ArrayList<Entitee> ciblage(Entitee instigateur,boolean offensif)
 	{
 		ArrayList<Entitee> cibles=new ArrayList<Entitee>();
 		
@@ -105,19 +127,21 @@ public class Combat {
 		
 	}
 	
-	public void attaque(Entitee cible,Entitee attaquant)
+	public String attaque(Entitee cible,Entitee attaquant)
 	{
+		String log="";
 		int deg=attaquant.getAtk()-cible.getDef();
-		System.out.println(attaquant.getNom()+" attaque "+cible.getNom()+" !");
+		log=log+attaquant.getNom()+" attaque "+cible.getNom()+" !"+'\n';
 		if(deg>0)
 		{
-			System.out.println(cible.getNom()+" subis "+deg+" points de dégats !");
+			log=log+cible.getNom()+" subis "+deg+" points de dégats !"+'\n';
 			cible.getDegats(deg);
 		}
 		else
 		{
-		System.out.println("Mais il n'inflige aucun dégats !");
+		log=log+"Mais il n'inflige aucun dégats !";
 		}
+		return log;
 	}
 	
 	private Entitee choixCible(Entitee instigateur,boolean offensif)//Interface pour que le joueur choisisse sa cible
@@ -142,6 +166,8 @@ public class Combat {
 	
 	public void actionIA(Entitee actif)
 	{
+		if(ciblage(actif,true).size()>0)
+		{
 		Action choix=IA.decision(actif, ciblage(actif,true), ciblage(actif,false));
 		
 		if(choix.getSort()==null)
@@ -153,54 +179,102 @@ public class Combat {
 		{
 			System.out.println(actif.getNom()+" utilise "+choix.getSort().getNom());
 			choix.getCible().subirComp(choix.getSort());
+			actif.reduireMana(choix.getSort().getCout());
 		}
 		
-		
+		}
 	}
 	
 	
 	
 	
-	public void actionJoueur(Entitee actif)
+	public void actionJoueur(Entitee actif,Competence sort,Entitee Cible)
 	{
-		if(ciblage(actif,true).size()>0) {
-		int choix;
-		System.out.println("->Action de "+actif.getNom());
-		System.out.println("Pv:"+actif.getPV());
-		System.out.println("1.Attaque\n2.Competences");
-		Scanner sc=new Scanner(System.in);
-		Entitee cible;
-		choix=sc.nextInt();
-		if(choix==1)
-		{
-		cible=this.choixCible(actif,true);
-		attaque(cible,actif);
-		}
-		else if(choix==2)
-		{
-			int c=1;
-			for(Competence i :actif.getSorts())
-			{
-				System.out.println(c+". "+i.getNom());
-				c++;
+		
+	
+			if(ciblage(actif,true).size()>0) {
+				
+					if(sort==null)
+						
+					{
+					this.log.add(attaque(Cible,actif));	
+					
+					}
+					
+					
+				
+				/*do	
+				{
+					System.out.println("->Action de "+actif.getNom());
+					System.out.println("Pv:"+actif.getPV());
+					System.out.println("1.Attaque\n2.Competences");
+					
+					choix=sc.nextInt();
+					if(choix==1)
+					{
+					cible=this.choixCible(actif,true);
+					attaque(cible,actif);
+					break;
+					}
+					else if(choix==2)
+					{
+						
+						
+							do {
+							int c=1;
+							for(Competence i :actif.getSorts())
+							{
+								System.out.println(c+". "+i.getNom());
+								c++;
+							}
+							System.out.println(0+"."+"retour");
+							
+							
+							choix=sc.nextInt();
+							
+							if(choix>0)
+							{
+								if(actif.getComp().get(choix-1).getCout()>actif.getMana())
+								{
+								manaOut=true;
+								System.out.println("Plus assez de mana !");
+								}
+							
+							}
+							else if (choix==0)
+							{
+								retour=0;
+							}
+							
+							}while(actif.getComp().get(choix-1).getCout()>actif.getMana() && manaOut==false);
+					
+							if(manaOut==false && retour==1)
+							{
+							cible=this.choixCible(actif,actif.getComp().get(choix-1).getCible());
+							cible.subirComp(actif.getComp().get(choix-1));
+							actif.reduireMana(actif.getComp().get(choix-1).getCout());
+							
+							}
+							
+					}
+					
+			
+			
+			
+			}while(retour==0);*/
+					
+			
+					
+				
+				
+				
 			}
-			do {
-			choix=sc.nextInt();
-			}while(actif.getComp().get(choix-1).getCout()>actif.getMana());
-		
-			cible=this.choixCible(actif,actif.getComp().get(choix-1).getCible());
-			cible.subirComp(actif.getComp().get(choix-1));
-			actif.reduireMana(actif.getComp().get(choix-1).getCout());
 			
-			
-			
-		}
 		
-		}
-		
+			
 	}
 	
-	private void retirerBlesse(ArrayList<Entitee> passage)
+	public void retirerBlesse(ArrayList<Entitee> passage)
 	{
 		boolean blesse=false;
 		int compteur=0;
@@ -249,10 +323,21 @@ public class Combat {
 	}
 	
 	
-	private void mainCombat()
+	public void mainCombat()
 	{
+		ArrayList<Integer> ordre;
+		this.passage=new ArrayList<Entitee>();
+		ordre=this.Initiative();
+		for(int j : ordre)
+		{
+			if(this.protagonistes.get(j).getPV()>0)
+			passage.add(this.protagonistes.get(j));
+		}
 		
+		
+		/*
 		int victory=0;
+		this.log=new ArrayList<String> ();
 		ArrayList<Integer> ordre;
 		ArrayList<Entitee>passage=new ArrayList<Entitee>();
 		while(victory==0)
@@ -306,7 +391,13 @@ public class Combat {
 			System.out.println("Défaite...");
 		}
 		
-		
+		*/
+	}
+	
+	
+	public ArrayList<Entitee> getPassage()
+	{
+		return this.passage;
 	}
 	
 

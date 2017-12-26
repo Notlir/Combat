@@ -1,6 +1,10 @@
 package personnages;
 import java.util.ArrayList;
 
+import org.newdawn.slick.Animation;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.SpriteSheet;
+
 import competences.*;
 
 
@@ -15,6 +19,46 @@ public abstract class Entitee {
 	protected int manaMax;
 	protected int mana;
 	protected ArrayList<Competence> sorts=new ArrayList<Competence>();
+	
+	protected int posX;
+	protected int posY;
+	public Animation[] anim=new Animation[1];
+	
+	
+	
+	/*#####Zone graphique####*/
+	
+	public int getX()
+	{
+		return this.posX;
+	}
+	
+	public int getY()
+	{
+		return this.posY;
+	}
+	
+	public void setX(int x)
+	{
+		this.posX=x;
+	}
+	
+	public void setY(int y)
+	{
+		this.posY=y;
+	}
+	
+	public void setText(String path) throws SlickException
+	{
+		SpriteSheet sprite = new SpriteSheet(path,102,138);
+		Animation anima= new Animation();
+		anima.addFrame(sprite.getSprite(0, 0), 100);
+		this.anim[0]=anima;
+		
+	}
+	
+	
+	/*#####zone logique#####*/
 
 		
 	public boolean getDegats(int deg)
@@ -71,7 +115,7 @@ public abstract class Entitee {
 	
 	public void reduireMana(int cout)
 	{
-		this.mana=this.mana-mana;
+		this.mana=this.mana-cout;
 	}
 	
 

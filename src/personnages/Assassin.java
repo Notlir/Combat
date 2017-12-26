@@ -1,9 +1,12 @@
 package personnages;
 
+import org.newdawn.slick.SlickException;
+
 public class Assassin extends Joueur {
 	
-	public Assassin()
+	public Assassin() throws SlickException
 	{
+		super();
 		this.atk=15;
 		this.def=5;
 		this.pvMax=20;

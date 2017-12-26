@@ -16,6 +16,7 @@ public class Smite extends Competence {
 			this.zone=1;
 			this.degheal=-20;
 			this.deghealDurr=0;
+			this.cout=50;
 		}
 
 }

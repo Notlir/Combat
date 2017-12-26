@@ -57,6 +57,8 @@ public class IA {
 		  
 		 for(Competence i : actif.getComp())
 		 {
+			 if(i.getCout()<actif.getMana())
+			 {
 			 cibles=new ArrayList<Clone>();
 			 
 			 if(i.getCible()==true)
@@ -69,8 +71,9 @@ public class IA {
 				 for(int j=0; j<cibles.size();j++)
 				 {
 					 
+					 
 					 cibles.get(j).subirComp(i);
-					
+					 
 					 arbre.add(new Action(i,gentils.get(j),Menace(mechants)-MenaceC(cibles)));
 					 cibles.set(j, clonage(gentils.get(j)));
 					 
@@ -98,7 +101,7 @@ public class IA {
 				 
 			 }
 			
-				 
+			 }	 
 		}
 		 
 		int choix=getIndiceMax(arbre);
