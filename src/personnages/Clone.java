@@ -40,18 +40,18 @@ public class Clone extends Entitee {
 	}
 	
 	@Override
-	public boolean getDegats(int deg)
+	public String getDegats(int deg)
 	{
 		this.pv=this.pv-deg;
 		
 		if(this.pv>0)
 		{
-			return false;
+			return "";
 		}
 		else 
 		{
 			
-			return true;
+			return "";
 		}
 	}
 	
@@ -59,17 +59,18 @@ public class Clone extends Entitee {
 	
 	
 	@Override
-	public void getHeal(int heal)
+	public String getHeal(int heal)
 	{
 		this.pv=this.pv+heal;		
 		if(this.pv>this.pvMax)
 		{
 			this.pv=this.pvMax;
 		}
+		return "";
 	}
 	
 	@Override
-	public void subirComp(Competence sort)
+	public String subirComp(Competence sort)
 	{ 
 		
 		if (sort.getDuree()>0)
@@ -92,7 +93,7 @@ public class Clone extends Entitee {
 					this.getHeal(degheal);
 				}
 		
-		
+		return "";
 		
 	}
 

@@ -2,44 +2,37 @@ package personnages;
 
 import java.util.ArrayList;
 
-import org.newdawn.slick.Animation;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.SpriteSheet;
 
 import competences.Competence;
 import competences.Eclair_givre;
 
-public class Liche extends Ennemi {
+public class DarkKnight extends Ennemi {
 	
 	
-
-
 	
-	public Liche(int diff,int nom) throws SlickException
+	public DarkKnight(int diff,int nom) throws SlickException
 	{
-		this.atk=3;
-		this.def=3;
+		this.atk=15;
+		this.def=10;
 		this.lvl=diff;
-		this.pvMax=25;
-		this.pv=25;
+		this.pvMax=40;
+		this.pv=40;
 		this.loot=1;
-		this.nom="Liche "+nom;
+		this.nom="Chevalier Noir "+nom;
 		this.profil=1;
-		this.manaMax=200;
-		this.mana=200;
+		this.manaMax=100;
+		this.mana=100;
 		this.sorts=new ArrayList<Competence> ();
 		this.sorts.add(new Eclair_givre());
 		
-		this.setText("src/personnages/sprites/liche.png");
+		this.setText("src/personnages/sprites/chevalier.png");
 	}
 	
 	public static int getLoot()
 	{
 		return 1;
 	}
-	
-	
-	
 	
 	
 	

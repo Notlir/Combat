@@ -12,9 +12,8 @@ public class Smite extends Competence {
 			this.bolus.add(-2);
 			this.cible=true;
 			this.duree=2;
-			this.cout=20;
 			this.zone=1;
-			this.degheal=-20;
+			this.degheal=-19;
 			this.deghealDurr=0;
 			this.cout=50;
 		}

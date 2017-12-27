@@ -61,30 +61,31 @@ public abstract class Entitee {
 	/*#####zone logique#####*/
 
 		
-	public boolean getDegats(int deg)
-	{
+	public String getDegats(int deg)
+	{String log="";
 		this.pv=this.pv-deg;
 		
 		if(this.pv>0)
 		{
-			return false;
+			return log;
 		}
 		else 
 		{
-			System.out.println(this.getNom()+" est neutralisé !");
-			return true;
+			log=log+this.getNom()+" est neutralisé !";
+			return log;
 		}
 	}
-	
-	public void getHeal(int heal)
+	public String getHeal(int heal)
 	{
+		String log="";
 		this.pv=this.pv+heal;
-		System.out.println(this.nom+" regagne "+heal+" PV!");
+		log=log+this.nom+" regagne "+heal+" PV!"+'\n';
 		
 		if(this.pv>this.pvMax)
 		{
 			this.pv=this.pvMax;
 		}
+		return log;
 	}
 	
 	public int getAtk()
@@ -136,14 +137,18 @@ public abstract class Entitee {
 	
 	
 	
-	public void subirComp(Competence sort)
+	public String subirComp(Competence sort)
 	{ 
+		String log="";
 		
 		if (sort.getDuree()>0)
 		{
 			this.effets_subis.add(new Effet(sort.getDuree(),sort.getBolus(),sort.getDegDurr(),sort.getNom()));
+			if(sort.getBolus()!=null)
+			{
 			this.atk=this.atk+sort.getBolus().get(0);
 			this.def=this.def+sort.getBolus().get(1);
+			}
 			
 		}
 		
@@ -152,20 +157,21 @@ public abstract class Entitee {
 			int degheal=sort.getDeg();
 			if(degheal<0)
 				{
-				System.out.println(this.nom+" subis "+(-degheal)+" points de degats de "+sort.getNom());
-					this.getDegats(-degheal);
+				log=log+this.nom+" subis "+(-degheal)+" points de degats de "+sort.getNom()+'\n';
+					log=log+this.getDegats(-degheal)+'\n';
 				}
 			else if(degheal>0)
 				{
-					this.getHeal(degheal);
+					log=log+this.getHeal(degheal)+'\n';
 				}
 		
-		
+		return log;
 		
 	}
 	
-	public void subirEffet()
+	public String subirEffet()
 	{
+		String log="";
 		for (Effet i : this.effets_subis)
 		{
 			if(i.getDuree()==0)
@@ -178,18 +184,20 @@ public abstract class Entitee {
 			int deg=i.getDegheal();
 			if(deg<0)
 			{
-				System.out.println(this.nom+" subis "+(-deg)+" points de degats de l'effet de "+i.getNom());
-				this.getDegats(-deg);
+				log=log+this.nom+" subis "+(-deg)+" points de degats de l'effet de "+i.getNom()+'\n';
+				log=log+this.getDegats(-deg);
 				
 			}
 			else if(deg>0)
 			{
-				this.getHeal(deg);
+				log=log+this.getHeal(deg);
 			}
 			
 			i.reduireDurée();
 			
 		}
+		
+		return log;
 	}
 	
 	public ArrayList<Competence> getSorts()

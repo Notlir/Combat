@@ -2,6 +2,8 @@ package personnages;
 
 import org.newdawn.slick.SlickException;
 
+import competences.Poison;
+
 public class Assassin extends Joueur {
 	
 	public Assassin() throws SlickException
@@ -16,6 +18,7 @@ public class Assassin extends Joueur {
 		this.nom="Assassin";
 		this.manaMax=100;
 		this.mana=100;
+		this.sorts.add(new Poison());
 		
 	}
 	

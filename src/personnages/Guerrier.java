@@ -12,7 +12,7 @@ public class Guerrier extends Joueur {
 	 public Guerrier() throws SlickException
 	 {
 		 
-		 this.atk=8;
+		 this.atk=10;
 		 this.def=7;
 		 this.lvl=1;
 		 this.pvMax=20;

@@ -10,6 +10,7 @@ public class NotCombat extends BasicGameState {
 	
 	Image background;
 	private StateBasedGame game;
+	public static final int ID=2;
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException {
 		this.background=new Image("src/background/background.jpg");
@@ -21,6 +22,8 @@ public class NotCombat extends BasicGameState {
 		this.background.draw(0,0,arg0.getWidth(),arg0.getHeight());
 
 	}
+	
+	
 
 	@Override
 	public void update(GameContainer arg0, StateBasedGame arg1, int arg2) throws SlickException {
@@ -31,11 +34,11 @@ public class NotCombat extends BasicGameState {
 	@Override
 	public int getID() {
 		
-		return 0;
+		return this.ID;
 	}
 	
 	@Override
-    public void keyReleased(int key, char c) {
+    public void keyPressed(int key, char c) {
 		
 		game.enterState(CombatScreen.ID);
        

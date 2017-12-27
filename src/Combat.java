@@ -41,6 +41,38 @@ public class Combat {
 		return this.protagonistes;
 	}
 	
+	private Entitee factoryMonstres(int id,int nom,int moy) throws SlickException
+	{
+		if(id<=25)
+		{
+			return new Squelette(moy,nom+1);
+		}
+		else if(id>25 && id<=35)
+		{
+			return new Liche(moy,nom+1);
+		}
+		else
+		{
+			return new DarkKnight(moy,nom+1);
+		}
+	}
+	
+	
+	private void GenererMonstres(int moy,int debut) throws SlickException
+	{
+		Random rand=new Random();
+		int nb=rand.nextInt(4)+1;
+		
+		for(int i=0;i<nb;i++)
+		{
+			this.protagonistes.add(factoryMonstres(rand.nextInt(40),i,moy));
+			this.protagonistes.get(debut+i).setX((fenetre.getWidth()/4)*3);
+			this.protagonistes.get(debut+i).setY(fenetre.getHeight()/5+(i*(fenetre.getHeight()/8))+3*fenetre.getHeight()/12);
+			
+		}
+		
+	}
+	
 	
 	
 	public void debutCombat(int difficult) throws SlickException
@@ -53,8 +85,9 @@ public class Combat {
 			moyenneNiveau=moyenneNiveau+this.protagonistes.get(i).getLVL();
 		}
 		moyenneNiveau=(moyenneNiveau/i)+difficult;
+		GenererMonstres(moyenneNiveau,debut);
 		
-		for(int j=0;j<2;j++) //TODO:MODIFIER LE 3
+		/*for(int j=0;j<2;j++) //TODO:MODIFIER LE 3
 		{
 			this.protagonistes.add(new Squelette(moyenneNiveau));
 			this.protagonistes.get(debut).setX((fenetre.getWidth()/4)*3);
@@ -65,7 +98,7 @@ public class Combat {
 		this.protagonistes.get(debut).setX((fenetre.getWidth()/4)*3);
 		this.protagonistes.get(debut).setY(fenetre.getHeight()/5+(2*(fenetre.getHeight()/8))+3*fenetre.getHeight()/12);
 		
-		this.recompense=moyenneNiveau*25*Squelette.getLoot();
+		this.recompense=moyenneNiveau*25*Squelette.getLoot();*/
 		
 		//mainCombat();
 	}
@@ -135,7 +168,7 @@ public class Combat {
 		if(deg>0)
 		{
 			log=log+cible.getNom()+" subis "+deg+" points de dégats !"+'\n';
-			cible.getDegats(deg);
+			log=log+cible.getDegats(deg);
 		}
 		else
 		{
@@ -166,22 +199,28 @@ public class Combat {
 	
 	public void actionIA(Entitee actif)
 	{
+		
 		if(ciblage(actif,true).size()>0)
 		{
 		Action choix=IA.decision(actif, ciblage(actif,true), ciblage(actif,false));
 		
 		if(choix.getSort()==null)
 		{
-			attaque(choix.getCible(),actif);
+			this.log.add(attaque(choix.getCible(),actif));
 		}
 		
 		else
 		{
-			System.out.println(actif.getNom()+" utilise "+choix.getSort().getNom());
-			choix.getCible().subirComp(choix.getSort());
+			this.log.add(actif.getNom()+" utilise "+choix.getSort().getNom()+'\n');
+			this.log.add(choix.getCible().subirComp(choix.getSort()));
 			actif.reduireMana(choix.getSort().getCout());
 		}
 		
+		}
+		
+		if(actif.getEffet().size()>0)
+		{
+			this.log.add(actif.subirEffet());
 		}
 	}
 	
@@ -199,6 +238,22 @@ public class Combat {
 					{
 					this.log.add(attaque(Cible,actif));	
 					
+					}
+					else
+					{
+						if(actif.getMana()<sort.getCout())
+						{
+							this.log.add("Pas assez de Mana !");
+						}
+						else
+						{
+						this.log.add(Cible.subirComp(sort));
+						actif.reduireMana(sort.getCout());
+						}
+					}
+					if(actif.getEffet().size()>0)
+					{
+						this.log.add(actif.subirEffet());
 					}
 					
 					
@@ -296,7 +351,7 @@ public class Combat {
 	
 	
 	
-	protected int conditionVictoire()
+	public int conditionVictoire()
 	{
 		int compteur=0;
 		boolean team=this.protagonistes.get(0).isFriendly();

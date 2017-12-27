@@ -25,6 +25,8 @@ public class CombatScreen extends BasicGameState {
 	Image menu;
 	private ArrayList<Joueur> groupe;
 	Music music;
+	Music defeat;
+	Music victory;
 	private boolean tourJoueur=false;
 	private boolean actif=false;
 	private Entitee current;
@@ -113,7 +115,7 @@ public class CombatScreen extends BasicGameState {
 					else this.curseur=this.current.getComp().size();	
 				}
 				
-				else if(this.status==3)
+				else if(this.status==3 || this.status==5 || this.status==4)
 				{
 					if(this.curseur>0)
 					{
@@ -128,7 +130,7 @@ public class CombatScreen extends BasicGameState {
 			
 			
 		}
-		}
+		
 		
 		if(key==Input.KEY_ENTER)
 		{
@@ -158,7 +160,7 @@ public class CombatScreen extends BasicGameState {
 				}
 				else
 				{
-					this.curseur=0;
+					
 					this.choix=this.current.getComp().get(curseur);
 					if(this.choix.getCible()==true)
 					{
@@ -168,13 +170,25 @@ public class CombatScreen extends BasicGameState {
 					{
 						this.status=5;
 					}
+					this.curseur=0;
 				}
 			}
+			
+			
 			
 			else if(this.status==3)
 			{
 				this.combat.actionJoueur(current, null, this.combat.ciblage(current, true).get(curseur));
 				this.status=6;
+				this.curseur=1;
+			}
+			else if(this.status==4 || this.status==5)
+			{	
+				this.combat.actionJoueur(current, this.choix, this.combat.ciblage(current, true).get(curseur));
+				this.status=6;
+				this.choix=null;
+				this.curseur=1;
+				
 			}
 			
 			else if(this.status==6)
@@ -182,6 +196,25 @@ public class CombatScreen extends BasicGameState {
 				this.status=7;
 			}
 			
+		}
+		
+		}
+		else
+		{
+			if(key==Input.KEY_ENTER)
+			{
+				
+				if(this.status==2)
+				{
+					this.status=7;
+				}
+			}
+			
+		}
+		
+		if(key==Input.KEY_ENTER && (this.status==8 || this.status==9) )
+		{
+			this.status=10;
 		}
 		
 	}
@@ -193,6 +226,7 @@ public class CombatScreen extends BasicGameState {
 		this.container=arg0;
 		this.background=new Image("src/background/battle.jpg");
 		this.music=new Music("src/battle-song.ogg");
+		this.defeat=new Music("src/defeat_song.ogg");
 		this.menu=new Image("src/background/interface.png");
 		
 		
@@ -219,6 +253,7 @@ public class CombatScreen extends BasicGameState {
 		}
 		if(debut==true)
 		{
+			this.status=1;
 			this.combat=new Combat(groupe,arg0);
 			this.combat.debutCombat(0);
 			debut=false;
@@ -274,8 +309,42 @@ public class CombatScreen extends BasicGameState {
 			
 			
 		}
+		else if(this.tourJoueur==false)
+		{
+			if(this.status==2)
+			{
+				for(int i=0;i<this.combat.log.size();i++)
+				{
+				
+				arg2.drawString(this.combat.log.get(i),(arg0.getWidth()/12)*4, i*(arg0.getHeight()/19)+(arg0.getHeight()/5)*4);
+				
+				}
+
+			}
+			
+			
+		}
 		
+		if(this.status==8)
+		{
+			arg2.drawString("Victoire !",(arg0.getWidth()/12)*4, 0*(arg0.getHeight()/19)+(arg0.getHeight()/5)*4);
+			
 		
+		}
+		
+		if(this.status==9)
+		{
+			arg2.drawString("Défaite...",(arg0.getWidth()/12)*4, 0*(arg0.getHeight()/19)+(arg0.getHeight()/5)*4);
+			
+				
+				if(defeat.playing()==false)
+				{
+					//this.music.stop();
+					//defeat.play();
+				}
+			
+		
+		}
 			
 	
 	}
@@ -285,7 +354,7 @@ public class CombatScreen extends BasicGameState {
 		ArrayList<Entitee> cibles=this.combat.ciblage(this.current, allies);
 		for(int i=0;i<cibles.size();i++)
 		{
-			g.drawString(cibles.get(i).getNom(),(con.getWidth()/12)*4, i*(con.getHeight()/19)+(con.getHeight()/5)*4);
+			g.drawString(cibles.get(i).getNom()+"(PV:"+cibles.get(i).getPV()+")",(con.getWidth()/12)*4, i*(con.getHeight()/19)+(con.getHeight()/5)*4);
 			
 		}
 		
@@ -297,7 +366,7 @@ public class CombatScreen extends BasicGameState {
 			int i=0;
 				for( i=0;i<this.current.getComp().size();i++)
 				{
-					g.drawString(this.current.getComp().get(i).getNom(),(con.getWidth()/12)*4, i*(con.getHeight()/19)+(con.getHeight()/5)*4);
+					g.drawString(this.current.getComp().get(i).getNom()+"("+this.current.getComp().get(i).getCout()+")",(con.getWidth()/12)*4, i*(con.getHeight()/19)+(con.getHeight()/5)*4);
 				}
 				
 				g.drawString("Retour",(con.getWidth()/12)*4, i*(con.getHeight()/19)+(con.getHeight()/5)*4);
@@ -305,7 +374,7 @@ public class CombatScreen extends BasicGameState {
 			}
 	
 	public void afficherAction(Graphics g,GameContainer con)
-	{	g.drawString("Action de "+this.current.getNom()+"(PV:"+this.current.getPV()+")",(con.getWidth()/12)*4, 0*(con.getHeight()/19)+(con.getHeight()/5)*4);
+	{	g.drawString("Action de "+this.current.getNom()+"(PV:"+this.current.getPV()+"/Mana:"+this.current.getMana()+")",(con.getWidth()/12)*4, 0*(con.getHeight()/19)+(con.getHeight()/5)*4);
 		g.drawString("Attaque",(con.getWidth()/12)*4, 1*(con.getHeight()/19)+(con.getHeight()/5)*4);
 		g.drawString("Competences",(con.getWidth()/12)*4, 2*(con.getHeight()/19)+(con.getHeight()/5)*4);
 		
@@ -328,8 +397,27 @@ public class CombatScreen extends BasicGameState {
 			maitreCombat();
 			
 		}
+		
+		if(this.status==7)
+		{
+			maitreCombat();
+		}
+	
+		if(this.tourJoueur==false && this.status==1 && debut==false)
+		{
+			this.combat.actionIA(current);
+			this.status=2;
+		}
 	
 		
+		if(this.status==10)
+		{
+			this.debut=true;
+			this.actif=false;
+			this.defeat.stop();
+			this.status=0;
+			arg1.enterState(NotCombat.ID);
+		}
 		
 	}
 
@@ -347,22 +435,56 @@ public class CombatScreen extends BasicGameState {
 		
 		if(this.actif==false)
 		{
+			
 		this.combat.mainCombat();
 		
-		passage = this.combat.getProta();//this.combat.getPassage();
+		passage = this.combat.getPassage();
+		this.current=passage.get(0);
 		}
 		this.actif=true;
-		this.current=passage.get(0);
+		
 	
 		if(this.current.isFriendly()==true)
 		{
 			this.tourJoueur=true;
 		}
+		else if(this.current.isFriendly()==false)
+		{
+			this.tourJoueur=false;
+		}
 		
 		if(this.status==7)
 		{
+			this.combat.log=new ArrayList<String>();
 			this.combat.retirerBlesse(passage);
 			this.passage.remove(0);
+			if(this.passage.size()==0)
+			{
+				this.actif=false;
+			}
+			else
+			{
+				this.current=this.passage.get(0);
+			}
+			this.status=1;
+
+			if(this.current.isFriendly()==true)
+			{
+				this.tourJoueur=true;
+			}
+			else if(this.current.isFriendly()==false)
+			{
+				this.tourJoueur=false;
+			}
+			
+			if(combat.conditionVictoire()==1)
+			{
+				this.status=8;
+			}
+			else if(combat.conditionVictoire()==2)
+			{
+				this.status=9;
+			}
 		}
 		
 		
